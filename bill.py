@@ -9,6 +9,7 @@ class Bill():
         self.date = datetime.datetime.strptime(date, "%Y/%m/%d %H:%M")
         self.location = location
         self.cancel = cancel
+        # end of __init__
 
     def __str__(self):
         # value_when_true if condition else value_when_false
@@ -25,6 +26,7 @@ def parseSMS(sms):
     else:
         print("wrong sms" + sms[0])
         return None
+    # end of parse SMS
 
 def groupSMS(smslist):
     groups = []
