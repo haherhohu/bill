@@ -48,21 +48,21 @@
             "point":"1"
         },
         {
-            "name":"il-hongdan",
+            "name":["il-hongdan"],
             "id":"1H",
             "type":"H",
             "month":"1",
             "point":"0.2"
         },
         {
-            "name":"il-pi-1",
+            "name":["il-pi-1"],
             "id":"1P1",
             "type":"P1",
             "month":"1",
             "point":"0.1"
         },
         {
-            "name":"il-pi-2",
+            "name":["il-pi-2"],
             "id":"1P2",
             "type":"P2",
             "month":"1",
