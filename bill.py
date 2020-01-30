@@ -11,16 +11,50 @@ class Bill():
         self.cancel = cancel
         # end of __init__
 
-    def __str__(self):
+    def updatePrice(self):
         # value_when_true if condition else value_when_false
         c = "*" if self.cancel else ""
-        return (str(self.date)[5:].replace("-", "/") + ", " + str(self.price) + ", " + self.location + c)
+        # update price for canceled
+        m = -1 if self.cancel and self.price > 0 else 1
+        self.price = self.price * m
+        self.location = self.location + c
+        return self
+
+    def __str__(self):
+        return (str(self.date)[5:].replace("-", "/") + ", " + str(self.price) + ", " + self.location)
 
 def parseSMS(sms):
     if("[Web발신]" in sms[0] ):
-        if("KRW" in sms[4]):
+        #print("debug:" + sms[1])
+        # 체크카드 출금예정
+        if("출금" in sms[1]):
+            sms1 = sms[1].split()
+            return Bill(sms1[2].replace(",","").replace("원",""),
+                        str(datetime.datetime.now().year) + "/" + sms1[3] + " 00:00", sms1[1] + " " + sms1[5])
+        # 지연취소(국민)
+        elif("취소완료" in sms[1]):
+            sms1 = sms[1].split()
+            return Bill(sms1[4].replace(",","").replace("취소완료(","").replace("원)",""),
+                        str(datetime.datetime.now().year) + "/" + sms1[3].replace("월","/").replace("일","") + " 00:00", sms1[1] + " 취소완료", True)
+        # 지연취소(현대)
+        elif("취소처리" in sms[1]):
+            sms1 = sms[1].split()
+            return Bill(sms1[5].replace(",","").replace("원",""),
+                        str(datetime.datetime.now().year) + "/" + sms1[2] + " 00:00", sms1[3] + " 취소완료", True)
+        # 외국결제        
+        elif("KRW" in sms[4]):
             return Bill(sms[4].replace(",","").replace("KRW", ""),
-                    str(datetime.datetime.now().year) + "/" + sms[3], sms[5], "취소" in sms[1])
+                        str(datetime.datetime.now().year) + "/" + sms[3], sms[5], "취소" in sms[1])
+        # 후불교통
+        elif("후불교통" in sms[2]):
+            return Bill(sms[3].split()[1].replace(",","").replace("원", ""), 
+                        str(datetime.datetime.now().year) + "/" + sms[4].replace("결제예정", "00:00"), sms[2] )
+        # 체크카드
+        elif("체크" in sms[1]):
+            return Bill(sms[4].replace(",", "").replace("원", ""), 
+                        str(datetime.datetime.now().year) + "/" + sms[3], sms[5], len(sms) == 7)
+
+        # 일반결제
         return Bill(sms[3].replace(",","").replace("원 일시불",""),
                     str(datetime.datetime.now().year) + "/" + sms[4], sms[5], "취소" in sms[1])
     else:
@@ -41,11 +75,16 @@ def groupSMS(smslist):
             groups.append(group)
             group = []
             group.append(sms)
-        else:
+        elif("승인거절" in sms):
+            group[0] = group[0] + "*"
+            group.append(sms)
+        else:            
             group.append(sms)
     # last one
     if(len(group)!= 0):
         groups.append(group)
+
+    groups = [e for e in groups if not "*" in e[0]]
 
     return groups
 
@@ -53,10 +92,8 @@ if( __name__ == "__main__"):
     with open("jan.txt") as f:
         smslist = f.readlines()
 
-    bills = [parseSMS(sms) for sms in groupSMS(smslist)]
-
+    bills = [parseSMS(sms).updatePrice() for sms in groupSMS(smslist)]
     total = sum([bill.price for bill in bills])
-
     [print(bill) for bill in bills]
     print(total)
 
