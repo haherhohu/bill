@@ -6,4 +6,6 @@ multi_exam.py -> 초등학교 2학년 1단계 곱셈 문제지를 pdf로 출력
 
 srs_goes_combine_mod.py -> SRS 데이터 가지고 뭔가 하려고 했던 것.
 
+namegen.py -> 유니코드 및 ksx1001(완성형) 기반 한글 이름 생성기.
+
 그 외에는 잘못 올라간 겁니다. 그냥 버리시면 되어요.
