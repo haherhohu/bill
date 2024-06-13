@@ -8,7 +8,7 @@ import random
 # ...
 # C8A1~C8FE Hangul Syllables in EUC-KR
 
-n_names = 100
+n_names = 10
 def gen_unicode_name(n_names):
     result = []
     for i in range(n_names):
@@ -21,7 +21,7 @@ def gen_unicode_name(n_names):
         decoded = [e.decode(encoding='utf-16', errors=u'ignore') for e in bytes]
         # 이름 추가
         result.append(''.join(decoded))
-    return result
+    return "\n".join(result)
 
 def gen_euckr_name(n_names):
     # 완성형 준비작업
@@ -37,4 +37,5 @@ def gen_euckr_name(n_names):
 
 if __name__ == '__main__':
     print(gen_unicode_name(n_names))
+    print("")
     print(gen_euckr_name(n_names))
