@@ -1,4 +1,5 @@
 import random
+import pickle
 
 # AC00–D7A3 Hangul Syllables in unicode
 # 44032~55203 (integer)
@@ -35,9 +36,39 @@ def gen_euckr_name(n_names, namelength):
                        ]) for i in range(n_names)])
 
 
+def gen_freqset_name(n_names, namelength):
+    # 전자가족관계시스템 등록 남녀 8014개 이름 (중복 제거)
+    first = list(pickle.load(open("first_names.pkl", "rb")))
+    # 한국의 주요 성씨 207개 (중복 제거)
+    last = list(pickle.load(open("last_names.pkl", "rb")))
+    # 하나의 스트링으로 합치고 중복 문자를 모두 제거
+    targets = set(" ".join("".join(first + last)).split(" "))
+    # remove '' element
+    targets.discard('')
+
+    # 굳이 랜덤으로 뽑아봄
+    return "\n".join([''.join(random.sample(list(targets), random.randint(*namelength))) for i in range(n_names)])    
+
+    # TODO: 가중치 설정
+    # lastweight = set(" ".join("".join(last)).split(" "))
+    # firstweight = set(" ".join("".join(first)).split(" "))
+
+
+def gen_freq_name(n_names):
+    # 전자가족관계시스템 등록 남녀 8014개 이름 (중복 제거)
+    first = list(pickle.load(open("first_names.pkl", "rb")))
+    # 한국의 주요 성씨 207개 (중복 제거)
+    last = list(pickle.load(open("last_names.pkl", "rb")))
+    # 이건 역시 상식적
+    return "\n".join(["".join(random.sample(last, 1) + random.sample(first, 1)) for i in range(n_names)])
+
 if __name__ == '__main__':
-    n_names = 100
-    namelength = (3, 5)
+    n_names = 10
+    namelength = (2, 3)
     print(gen_unicode_name(n_names, namelength))
     print("")
     print(gen_euckr_name(n_names, namelength))
+    print("")
+    print(gen_freqset_name(n_names, namelength))
+    print("")
+    print(gen_freq_name(n_names))
