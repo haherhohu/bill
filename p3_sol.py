@@ -41,7 +41,7 @@ def make_frends_map(peoples, iu):
 
     return friends
 
-# [8] friends recommend method only social network
+# friends recommend method only social network
 def recommend_friend(friends):
     intersection = []
 
@@ -49,7 +49,12 @@ def recommend_friend(friends):
         for u in friends:
             if i != u:
                 intersection.append((i, u, len(friends[i] & friends[u])))
+
+    # 솎아내기, e[1] 과 e[0] 는 친구가 아니어야 함.
+    intersection = [e for e in intersection if e[1] not in friends[e[0]]]
+    print(intersection)
     
+    # most know mutual friends
     recommend = sorted(intersection, key=lambda x: x[2], reverse=True)[0]
     return recommend
 
